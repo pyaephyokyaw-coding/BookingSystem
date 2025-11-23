@@ -1,6 +1,7 @@
 using BCT.BusinessRule.LogicServices;
 using BCT.CommonLib.Services;
 using BCT.DataAccess.Data;
+using BCT.DataAccess.DataRepositories;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<BookingSystemDbContext>(options =>
 
 // Dependency Injection for Logic Services and Repositories
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<User>();
 builder.Services.AddScoped<ResponseService>();
 
 var app = builder.Build();

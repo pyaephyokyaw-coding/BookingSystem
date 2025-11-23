@@ -1,84 +1,48 @@
 ﻿using BCT.CommonLib.Models.DataModels;
-using BCT.DataAccess.Data;
-using Microsoft.EntityFrameworkCore;
+using BCT.DataAccess.DataRepositories;
 
 namespace BCT.BusinessRule.LogicServices;
 
 public class UserService
 {
-    private readonly BookingSystemDbContext _dbContext;
-    public UserService(BookingSystemDbContext dbContext)
+    private readonly User _userRepository;
+
+    public UserService(User userRepository)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     public bool IsUserExist(int userId)
     {
-        var user = _dbContext.Users.Find(userId);
-        return user != null;
+        return _userRepository.IsUserExist(userId);
     }
 
     public UserModel? GetUserById(int userId)
     {
-        var user = _dbContext.Users.Find(userId);
-        return user;
+        return _userRepository.GetUserById(userId);
     }
 
-    public UserModel GetUserByToken(UserModel user)
+    public async Task<List<UserModel>> GetUsersAsync(UserModel? user)
     {
-        var existingUser = _dbContext.Users
-            .FirstOrDefault(u => u.Email == user.Email && u.Password == user.Password);
-        return existingUser;
-    }
-
-    public async Task<List<UserModel>> GetUsersAsync(UserModel user)
-    {
-        var users = await _dbContext.Users
-            .Where(u =>
-                u.UserId == user.UserId ||
-                u.FullName == user.FullName ||
-                u.Email == user.Email ||
-                u.Phone == user.Phone ||
-                u.Role == user.Role ||
-                u.CreatedAt == user.CreatedAt
-            )
-            .ToListAsync();
-
-        return users;
+        if (user == null)
+        {
+            return await _userRepository.GetUsersAsync(new UserModel());
+        }
+        return await _userRepository.GetUsersAsync(user);
     }
 
     public UserModel CreateUser(UserModel user)
     {
-        _dbContext.Users.Add(user);
-        _dbContext.SaveChanges();
-        return user;
+        return _userRepository.CreateUser(user);
     }
-
 
     public bool UpdateUser(UserModel user)
     {
-        var existingUser = _dbContext.Users.Find(user.UserId);
-        if (existingUser == null)
-        {
-            return false;
-        }
-        existingUser.FullName = user.FullName;
-        existingUser.Email = user.Email;
-        existingUser.Password = user.Password;
-        existingUser.Role = user.Role;
-        var result = _dbContext.SaveChanges();
-        return result > 0;
+        return _userRepository.UpdateUser(user);
     }
 
     public bool DeleteUser(int userId)
     {
-        var user = _dbContext.Users.Find(userId);
-        if (user == null)
-        {
-            return false;
-        }
-        _dbContext.Users.Remove(user);
-        var result = _dbContext.SaveChanges();
-        return result > 0;
+        return _userRepository.DeleteUser(userId);
     }
 }
