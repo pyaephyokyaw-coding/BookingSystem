@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="LogicServices\" />
+    <ProjectReference Include="..\BCT.DataAccess\BCT.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

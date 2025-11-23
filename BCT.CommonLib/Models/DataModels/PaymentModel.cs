@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BCT.CommonLib.Models;
+namespace BCT.CommonLib.Models.DataModels;
 
 public class PaymentModel
 {
@@ -30,5 +30,5 @@ public class PaymentModel
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public BookingModel Booking { get; set; }
+    //public BookingModel Booking { get; set; }
 }

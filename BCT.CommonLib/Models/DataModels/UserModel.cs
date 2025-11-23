@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BCT.CommonLib.Models;
+namespace BCT.CommonLib.Models.DataModels;
 
 public class UserModel
 {
@@ -22,10 +22,10 @@ public class UserModel
 
     [Required]
     [MaxLength(255)]
-    public string PasswordHash { get; set; }
+    public string Password { get; set; }
 
     [MaxLength(50)]
-    public string Role { get; set; }
+    public string? Role { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -33,7 +33,7 @@ public class UserModel
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public ICollection<BookingModel> Bookings { get; set; }
+    //public ICollection<BookingModel> Bookings { get; set; }
 
-    public ICollection<AuditLogModel> AuditLogs { get; set; }
+    //public ICollection<AuditLogModel> AuditLogs { get; set; }
 }

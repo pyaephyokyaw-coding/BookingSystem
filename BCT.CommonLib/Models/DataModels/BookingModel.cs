@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BCT.CommonLib.Models;
+namespace BCT.CommonLib.Models.DataModels;
 
 public class BookingModel
 {
@@ -29,5 +29,5 @@ public class BookingModel
 
     public UserModel User { get; set; }
 
-    public ICollection<PaymentModel> Payments { get; set; }
+    //public ICollection<PaymentModel> Payments { get; set; }
 }

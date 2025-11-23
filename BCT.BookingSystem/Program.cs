@@ -1,36 +1,22 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using BCT.BusinessRule.LogicServices;
+using BCT.CommonLib.Services;
+using BCT.DataAccess.Data;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-//builder.Services.AddScoped<IJwtService, JwtService>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = "your_issuer",
-        ValidAudience = "your_audience",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"))
-    };
-});
-
-// Add services to the container.
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database
+builder.Services.AddDbContext<BookingSystemDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BookingSystemConnectionString")));
+
+// Dependency Injection for Logic Services and Repositories
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ResponseService>();
 
 var app = builder.Build();
 
@@ -43,7 +29,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
