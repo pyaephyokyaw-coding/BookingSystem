@@ -1,0 +1,6 @@
+@BackendCodeTest.BookingSystem_HostAddress = http://localhost:5196
+
+GET {{BackendCodeTest.BookingSystem_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,6 @@
+@BCT.BookingSystem_HostAddress = http://localhost:5230
+
+GET {{BCT.BookingSystem_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
