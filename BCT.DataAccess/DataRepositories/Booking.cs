@@ -9,14 +9,12 @@ public class Booking(BookingSystemDbContext dbContext)
     public async Task<List<BookingModel>> GetAllAsync()
     {
         return await dbContext.Bookings.Where(x => true)
-            .Include(x => x.User)
             .ToListAsync();
     }
 
     public async Task<BookingModel?> GetByIdAsync(int id)
     {
         return await dbContext.Bookings
-            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.BookingId == id);
     }
 
@@ -45,6 +43,15 @@ public class Booking(BookingSystemDbContext dbContext)
     {
         var exist = await dbContext.Bookings.FindAsync(id);
         if (exist == null) return false;
+
+        var payment = await dbContext.Payments
+            .FirstOrDefaultAsync(x => x.BookingId == id);
+
+        if (payment != null)
+        {
+            dbContext.Payments.Remove(payment);
+            await dbContext.SaveChangesAsync();
+        }
 
         dbContext.Bookings.Remove(exist);
         await dbContext.SaveChangesAsync();

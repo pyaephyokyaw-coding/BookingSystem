@@ -9,7 +9,6 @@ public class PaymentModel
     public int PaymentId { get; set; }
 
     [Required]
-    [ForeignKey("Booking")]
     public int BookingId { get; set; }
 
     [Required]

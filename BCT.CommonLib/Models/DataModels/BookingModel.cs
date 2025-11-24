@@ -9,12 +9,11 @@ public class BookingModel
     public int BookingId { get; set; }
 
     [Required]
-    [ForeignKey("User")]
     public int UserId { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public string BookingNumber { get; set; }
+    public string? BookingNumber { get; set; }
 
     public DateTime? ScheduleDate { get; set; }
 
@@ -27,7 +26,7 @@ public class BookingModel
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public UserModel User { get; set; }
+    //public UserModel User { get; set; }
 
     //public ICollection<PaymentModel> Payments { get; set; }
 }

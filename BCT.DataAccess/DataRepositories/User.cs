@@ -6,16 +6,16 @@ namespace BCT.DataAccess.DataRepositories;
 
 public class User(BookingSystemDbContext dbContext)
 {
-    public bool IsUserExistByUserId(int userId)
+    public async Task<bool> IsUserExistByUserIdAsync(int userId)
     {
-        var user = dbContext.Users.Find(userId);
+        var user = await dbContext.Users.FindAsync(userId);
         return user != null;
     }
 
-    public bool IsUserExist(UserModel user)
+    public async Task<bool> IsUserExistAsync(UserModel user)
     {
-        var isUserExist = dbContext.Users
-            .Any(u =>
+        var isUserExist = await dbContext.Users
+            .AnyAsync(u =>
                 u.UserId == user.UserId ||
                 u.FullName == user.FullName ||
                 u.Email == user.Email ||
@@ -27,23 +27,23 @@ public class User(BookingSystemDbContext dbContext)
         return isUserExist;
     }
 
-    public UserModel? GetUserById(int userId)
+    public async Task<UserModel?> GetUserByIdAsync(int userId)
     {
-        var user = dbContext.Users.Find(userId);
+        var user = await dbContext.Users.FindAsync(userId);
         return user;
     }
 
-    public bool IsUserExistByEmail(string email)
+    public async Task<bool> IsUserExistByEmailAsync(string email)
     {
-        var user = dbContext.Users
-            .FirstOrDefault(u => u.Email == email);
+        var user = await dbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
         return user != null;
     }
 
-    public UserModel? GetUserByEmail(string email)
+    public async Task<UserModel?> GetUserByEmailAsync(string email)
     {
-        var user = dbContext.Users
-        .FirstOrDefault(u => u.Email == email);
+        var user = await dbContext.Users
+        .FirstOrDefaultAsync(u => u.Email == email);
 
         return user;
     }
@@ -64,9 +64,9 @@ public class User(BookingSystemDbContext dbContext)
         return users;
     }
 
-    public UserModel? CreateUser(UserModel user)
+    public async Task<UserModel?> CreateUserAsync(UserModel user)
     {
-        var hasData = IsUserExistByEmail(user.Email);
+        var hasData = await IsUserExistByEmailAsync(user.Email);
         if (hasData)
         {
             throw new Exception("User with the same email already exists.");
@@ -80,9 +80,9 @@ public class User(BookingSystemDbContext dbContext)
         return user;
     }
 
-    public bool UpdateUser(UserModel user)
+    public async Task<bool> UpdateUserAsync(UserModel user)
     {
-        var existingUser = dbContext.Users.Find(user.UserId);
+        var existingUser = await dbContext.Users.FindAsync(user.UserId);
         if (existingUser == null)
         {
             return false;
@@ -98,13 +98,11 @@ public class User(BookingSystemDbContext dbContext)
         return result > 0;
     }
 
-    public bool DeleteUser(int userId)
+    public async Task<bool> DeleteUserAsync(int userId)
     {
-        var user = dbContext.Users.Find(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await dbContext.Users.FindAsync(userId);
+        if (user == null) return false;
+
         dbContext.Users.Remove(user);
         var result = dbContext.SaveChanges();
         return result > 0;

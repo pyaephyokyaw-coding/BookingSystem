@@ -10,14 +10,14 @@ namespace BCT.BusinessRule.LogicServices;
 
 public class AuthService(User userRepository, IConfiguration configuration)
 {
-    public bool IsUserExistByEmail(string email)
+    public async Task<bool> IsUserExistByEmailAsync(string email)
     {
-        return userRepository.IsUserExistByEmail(email);
+        return await userRepository.IsUserExistByEmailAsync(email);
     }
 
-    public LoginResponseModel? Login(string email, string password)
+    public async Task<LoginResponseModel?> LoginAsync(string email, string password)
     {
-        var user = userRepository.GetUserByEmail(email);
+        var user = await userRepository.GetUserByEmailAsync(email);
 
         if (user == null)
             return null;
@@ -30,9 +30,9 @@ public class AuthService(User userRepository, IConfiguration configuration)
         return GenerateJWTToken(user);
     }
 
-    public UserModel? Register(UserModel user)
+    public async Task<UserModel?> RegisterAsync(UserModel user)
     {
-        return userRepository.CreateUser(user);
+        return await userRepository.CreateUserAsync(user);
     }
 
     private LoginResponseModel GenerateJWTToken(UserModel user)

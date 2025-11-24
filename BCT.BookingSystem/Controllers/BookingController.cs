@@ -36,6 +36,11 @@ public class BookingController(BookingService bookingService, ResponseService re
         try
         {
             var response = await bookingService.GetAllBookingsAsync();
+            if (response == null)
+            {
+                return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
+            }
+
             return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, response));
         }
         catch (Exception ex)

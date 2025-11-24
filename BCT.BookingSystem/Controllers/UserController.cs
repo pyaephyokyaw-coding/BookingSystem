@@ -4,6 +4,7 @@ using BCT.CommonLib.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace BCT.BookingSystem.Controllers;
 
@@ -13,17 +14,17 @@ public class UserController(UserService userService, ResponseService responseSer
 {
 
     [HttpGet(("{id}"))]
-    public IActionResult GetUserById(int id)
+    public async Task<IActionResult> GetUserById(int id)
     {
         try
         {
-            var isUserExit = userService.IsUserExistByUserId(id);
+            var isUserExit = await userService.IsUserExistByUserIdAsync(id);
             if (!isUserExit)
             {
                 return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var user = userService.GetUserById(id);
+            var user = await userService.GetUserByIdAsync(id);
             return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, user));
         }
         catch (Exception ex)
@@ -54,17 +55,17 @@ public class UserController(UserService userService, ResponseService responseSer
 
 
     [HttpPost]
-    public IActionResult CreateUser([FromBody] UserModel user)
+    public async Task<IActionResult> CreateUser([FromBody] UserModel user)
     {
         try
         {
-            var isUserExit = userService.IsUserExist(user);
+            var isUserExit = await userService.IsUserExistAsync(user);
             if (isUserExit)
             {
                 return Conflict(responseService.ResponseMessage("User with the same email already exists."));
             }
 
-            var createdUser = userService.CreateUser(user);
+            var createdUser = await userService.CreateUserAsync(user);
             return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, createdUser));
         }
         catch (Exception ex)
@@ -75,17 +76,17 @@ public class UserController(UserService userService, ResponseService responseSer
 
     [Authorize]
     [HttpPut]
-    public IActionResult UpdateUser([FromBody] UserModel user)
+    public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
     {
         try
         {
-            var isUserExit = userService.IsUserExistByUserId(user.UserId);
+            var isUserExit = await userService.IsUserExistByUserIdAsync(user.UserId);
             if (!isUserExit)
             {
                 return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var result = userService.UpdateUser(user);
+            var result = await userService.UpdateUserAsync(user);
             if (!result)
             {
                 return StatusCode(500, $"An error occurred while updating the User : {user!.FullName}.");
@@ -102,18 +103,18 @@ public class UserController(UserService userService, ResponseService responseSer
 
     [Authorize]
     [HttpDelete("{id}")]
-    public IActionResult DeleteUser(int id)
+    public async Task<IActionResult> DeleteUser(int id)
     {
         try
         {
-            var isUserExit = userService.IsUserExistByUserId(id);
+            var isUserExit = await userService.IsUserExistByUserIdAsync(id);
             if (!isUserExit)
             {
                 return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var user = userService.GetUserById(id);
-            var result = userService.DeleteUser(id);
+            var user = await userService.GetUserByIdAsync(id);
+            var result = await userService.DeleteUserAsync(id);
             if (!result)
             {
                 return StatusCode(500, $"An error occurred while deleting the User : {user!.FullName}.");

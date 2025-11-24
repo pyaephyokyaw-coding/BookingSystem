@@ -3,6 +3,7 @@ using BCT.CommonLib.Models.AuthModels;
 using BCT.CommonLib.Models.DataModels;
 using BCT.CommonLib.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace BCT.BookingSystem.Controllers;
 
@@ -11,17 +12,17 @@ namespace BCT.BookingSystem.Controllers;
 public class AuthController(AuthService authService, ResponseService responseService) : ControllerBase
 {
     [HttpPost("register")]
-    public IActionResult Register([FromBody] UserModel user)
+    public async Task<IActionResult> Register([FromBody] UserModel user)
     {
         try
         {
-            var hasData = authService.IsUserExistByEmail(user.Email);
+            var hasData = await authService.IsUserExistByEmailAsync(user.Email);
             if (hasData)
             {
                 return BadRequest(responseService.ResponseMessage("User already exists."));
             }
 
-            var userData = authService.Register(user);
+            var userData =await authService.RegisterAsync(user);
             if (userData == null)
             {
                 return BadRequest(responseService.ResponseMessage("Registration failed."));
@@ -36,14 +37,14 @@ public class AuthController(AuthService authService, ResponseService responseSer
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginModel login)
+    public async Task<IActionResult> Login([FromBody] LoginModel login)
     {
         if (login == null)
             return BadRequest(new { message = "Request body is invalid" });
 
         try
         {
-            var loginResponseModel = authService.Login(login.Email, login.Password);
+            var loginResponseModel = await authService.LoginAsync(login.Email, login.Password);
 
             if (string.IsNullOrEmpty(loginResponseModel?.Token))
                 return Unauthorized(new { message = "Invalid email or password" });

@@ -1,9 +1,7 @@
-using BCT.BusinessRule.LogicServices;
-using BCT.CommonLib.Services;
-using BCT.DataAccess.Data;
-using BCT.DataAccess.DataRepositories;
+using BCT.BookingSystem.Entity.RedisService;
+using BCT.BusinessRule.Services.HangfireServices;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -11,6 +9,9 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+var redisConfigureSetting = new RedisConfigureSetting(builder.Configuration);
+redisConfigureSetting.ConfigureServices(builder.Services);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -41,8 +42,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Database
-builder.Services.AddDbContext<BookingSystemDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BookingSystemConnectionString")));
+//builder.Services.AddDbContext<BookingSystemDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("BookingSystemConnectionString")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -60,16 +61,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddAuthorization();
 
-// Dependency Injection for Logic Services and Repositories
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<User>();
-builder.Services.AddScoped<BookingService>();
-builder.Services.AddScoped<Booking>();
-builder.Services.AddScoped<PaymentService>();
-builder.Services.AddScoped<Payment>();
-builder.Services.AddScoped<ResponseService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,8 +73,17 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseHangfireDashboard();
+
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+
+recurringJobManager.AddOrUpdate<NotificationJobService>("SendExpirationNotifications", service =>
+    service.SendNotificationsForOldUsers(), Cron.Minutely);
+
 
 app.Run();

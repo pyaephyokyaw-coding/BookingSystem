@@ -1,23 +1,24 @@
 ﻿using BCT.CommonLib.Models.DataModels;
 using BCT.DataAccess.DataRepositories;
+using System.Threading.Tasks;
 
 namespace BCT.BusinessRule.LogicServices;
 
-public class UserService(User userRepository)
+public class UserService(User userRepository, Booking bookingRepository)
 {
-    public bool IsUserExistByUserId(int userid)
+    public async Task<bool> IsUserExistByUserIdAsync(int userid)
     {
-        return userRepository.IsUserExistByUserId(userid);
+        return await userRepository.IsUserExistByUserIdAsync(userid);
     }
 
-    public bool IsUserExist(UserModel user)
+    public async Task<bool> IsUserExistAsync(UserModel user)
     {
-        return userRepository.IsUserExistByUserId(user.UserId);
+        return await userRepository.IsUserExistByUserIdAsync(user.UserId);
     }
 
-    public UserModel? GetUserById(int userId)
+    public async Task<UserModel?> GetUserByIdAsync(int userId)
     {
-        return userRepository.GetUserById(userId);
+        return await userRepository.GetUserByIdAsync(userId);
     }
 
     public async Task<List<UserModel>> GetUsersAsync(UserModel? user)
@@ -29,18 +30,20 @@ public class UserService(User userRepository)
         return await userRepository.GetUsersAsync(user);
     }
 
-    public UserModel? CreateUser(UserModel user)
+    public async Task<UserModel?> CreateUserAsync(UserModel user)
     {
-        return userRepository.CreateUser(user);
+        return await userRepository.CreateUserAsync(user);
     }
 
-    public bool UpdateUser(UserModel user)
+    public async Task<bool> UpdateUserAsync(UserModel user)
     {
-        return userRepository.UpdateUser(user);
+        return await userRepository.UpdateUserAsync(user);
     }
 
-    public bool DeleteUser(int userId)
+    public async Task<bool> DeleteUserAsync(int userId)
     {
-        return userRepository.DeleteUser(userId);
+        await bookingRepository.DeleteAsync(userId);
+
+        return await userRepository.DeleteUserAsync(userId);
     }
 }

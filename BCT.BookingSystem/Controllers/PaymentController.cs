@@ -10,7 +10,7 @@ namespace BCT.BookingSystem.Controllers;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class PaymentController(PaymentService paymentService, ResponseService responseService) : Controller
+public class PaymentController(PaymentService paymentService, ResponseService responseService) : ControllerBase
 {
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPaymentById(int id)

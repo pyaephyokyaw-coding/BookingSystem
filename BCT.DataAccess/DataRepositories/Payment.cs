@@ -9,14 +9,12 @@ public class Payment(BookingSystemDbContext dbContext)
     public async Task<List<PaymentModel>> GetAllAsync()
     {
         return await dbContext.Payments
-            .Include(x => x.BookingId)
             .ToListAsync();
     }
 
     public async Task<PaymentModel?> GetByIdAsync(int id)
     {
         return await dbContext.Payments
-            .Include(x => x.BookingId)
             .FirstOrDefaultAsync(x => x.PaymentId == id);
     }
 

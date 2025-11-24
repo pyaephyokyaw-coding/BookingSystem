@@ -6,9 +6,8 @@ namespace BCT.CommonLib.Models.DataModels;
 public class AuditLogModel
 {
     [Key]
-    public int Id { get; set; }
+    public int AuditLogId { get; set; }
 
-    [ForeignKey("User")]
     public int? UserId { get; set; }
 
     [Required]
@@ -18,5 +17,5 @@ public class AuditLogModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime LogDate { get; set; } = DateTime.Now;
 
-    public UserModel User { get; set; }
+    //public UserModel User { get; set; }
 }

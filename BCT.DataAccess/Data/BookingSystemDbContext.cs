@@ -18,4 +18,6 @@ public class BookingSystemDbContext : DbContext
 
     public DbSet<AuditLogModel> AuditLogs { get; set; }
 
+    public DbSet<ApiLogModel> ApiLogs { get; set; }
+
 }
