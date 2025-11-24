@@ -64,6 +64,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<User>();
+builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<Booking>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<Payment>();
 builder.Services.AddScoped<ResponseService>();
 
 var app = builder.Build();
