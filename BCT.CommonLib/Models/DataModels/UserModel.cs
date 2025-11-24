@@ -18,7 +18,7 @@ public class UserModel
     public string Email { get; set; }
 
     [MaxLength(50)]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     [Required]
     [MaxLength(255)]

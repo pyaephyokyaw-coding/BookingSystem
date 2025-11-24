@@ -3,46 +3,44 @@ using BCT.DataAccess.DataRepositories;
 
 namespace BCT.BusinessRule.LogicServices;
 
-public class UserService
+public class UserService(User userRepository)
 {
-    private readonly User _userRepository;
-
-    public UserService(User userRepository)
+    public bool IsUserExistByUserId(int userid)
     {
-        _userRepository = userRepository;
+        return userRepository.IsUserExistByUserId(userid);
     }
 
-    public bool IsUserExist(int userId)
+    public bool IsUserExist(UserModel user)
     {
-        return _userRepository.IsUserExist(userId);
+        return userRepository.IsUserExistByUserId(user.UserId);
     }
 
     public UserModel? GetUserById(int userId)
     {
-        return _userRepository.GetUserById(userId);
+        return userRepository.GetUserById(userId);
     }
 
     public async Task<List<UserModel>> GetUsersAsync(UserModel? user)
     {
         if (user == null)
         {
-            return await _userRepository.GetUsersAsync(new UserModel());
+            return await userRepository.GetUsersAsync(new UserModel());
         }
-        return await _userRepository.GetUsersAsync(user);
+        return await userRepository.GetUsersAsync(user);
     }
 
-    public UserModel CreateUser(UserModel user)
+    public UserModel? CreateUser(UserModel user)
     {
-        return _userRepository.CreateUser(user);
+        return userRepository.CreateUser(user);
     }
 
     public bool UpdateUser(UserModel user)
     {
-        return _userRepository.UpdateUser(user);
+        return userRepository.UpdateUser(user);
     }
 
     public bool DeleteUser(int userId)
     {
-        return _userRepository.DeleteUser(userId);
+        return userRepository.DeleteUser(userId);
     }
 }

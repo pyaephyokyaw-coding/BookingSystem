@@ -9,33 +9,26 @@ namespace BCT.BookingSystem.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController(UserService userService, ResponseService responseService) : ControllerBase
 {
-    private readonly UserService _userService;
-    private readonly ResponseService _responseService;
-    public UserController(UserService userService, ResponseService responseService)
-    {
-        _userService = userService;
-        _responseService = responseService;
-    }
 
     [HttpGet(("{id}"))]
     public IActionResult GetUserById(int id)
     {
         try
         {
-            var isUserExit = _userService.IsUserExist(id);
+            var isUserExit = userService.IsUserExistByUserId(id);
             if (!isUserExit)
             {
-                return NotFound(_responseService.ResponseMessage(HttpStatusCode.NotFound));
+                return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var user = _userService.GetUserById(id);
-            return Ok(_responseService.ResponseDataMessage(HttpStatusCode.OK, user));
+            var user = userService.GetUserById(id);
+            return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, user));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, _responseService.ResponseMessage(HttpStatusCode.InternalServerError));
+            return StatusCode(500, responseService.ResponseMessage(HttpStatusCode.InternalServerError));
         }
     }
 
@@ -44,18 +37,18 @@ public class UserController : ControllerBase
     {
         try
         {
-            var users = await _userService.GetUsersAsync(user);
+            var users = await userService.GetUsersAsync(user);
 
             if (users == null || !users.Any())
             {
-                return NotFound(_responseService.ResponseMessage(HttpStatusCode.NotFound));
+                return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            return Ok(_responseService.ResponseDataMessage(HttpStatusCode.OK, users));
+            return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, users));
         }
         catch (Exception)
         {
-            return StatusCode(500, _responseService.ResponseMessage(HttpStatusCode.InternalServerError));
+            return StatusCode(500, responseService.ResponseMessage(HttpStatusCode.InternalServerError));
         }
     }
 
@@ -65,18 +58,18 @@ public class UserController : ControllerBase
     {
         try
         {
-            var isUserExit = _userService.IsUserExist(user.UserId);
+            var isUserExit = userService.IsUserExist(user);
             if (isUserExit)
             {
-                return Conflict(_responseService.ResponseMessage("User with the same email already exists."));
+                return Conflict(responseService.ResponseMessage("User with the same email already exists."));
             }
 
-            var createdUser = _userService.CreateUser(user);
-            return Ok(_responseService.ResponseDataMessage(HttpStatusCode.OK, createdUser));
+            var createdUser = userService.CreateUser(user);
+            return Ok(responseService.ResponseDataMessage(HttpStatusCode.OK, createdUser));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, _responseService.ResponseMessage(HttpStatusCode.InternalServerError));
+            return StatusCode(500, responseService.ResponseMessage(HttpStatusCode.InternalServerError));
         }
     }
 
@@ -86,23 +79,23 @@ public class UserController : ControllerBase
     {
         try
         {
-            var isUserExit = _userService.IsUserExist(user.UserId);
+            var isUserExit = userService.IsUserExistByUserId(user.UserId);
             if (!isUserExit)
             {
-                return NotFound(_responseService.ResponseMessage(HttpStatusCode.NotFound));
+                return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var result = _userService.UpdateUser(user);
+            var result = userService.UpdateUser(user);
             if (!result)
             {
                 return StatusCode(500, $"An error occurred while updating the User : {user!.FullName}.");
             }
 
-            return Ok(_responseService.ResponseMessage(HttpStatusCode.OK));
+            return Ok(responseService.ResponseMessage("Successful updated."));
         }
         catch (Exception ex)
         {
-            var response = _responseService.ResponseMessage(HttpStatusCode.InternalServerError);
+            var response = responseService.ResponseMessage(HttpStatusCode.InternalServerError);
             return StatusCode(500, response);
         }
     }
@@ -113,24 +106,24 @@ public class UserController : ControllerBase
     {
         try
         {
-            var isUserExit = _userService.IsUserExist(id);
+            var isUserExit = userService.IsUserExistByUserId(id);
             if (!isUserExit)
             {
-                return NotFound(_responseService.ResponseMessage(HttpStatusCode.NotFound));
+                return NotFound(responseService.ResponseMessage(HttpStatusCode.NotFound));
             }
 
-            var user = _userService.GetUserById(id);
-            var result = _userService.DeleteUser(id);
+            var user = userService.GetUserById(id);
+            var result = userService.DeleteUser(id);
             if (!result)
             {
                 return StatusCode(500, $"An error occurred while deleting the User : {user!.FullName}.");
             }
 
-            return Ok(_responseService.ResponseMessage($"User : {user!.FullName} deleted successfully."));
+            return Ok(responseService.ResponseMessage($"User : {user!.FullName} deleted successfully."));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, _responseService.ResponseMessage(HttpStatusCode.InternalServerError));
+            return StatusCode(500, responseService.ResponseMessage(HttpStatusCode.InternalServerError));
         }
     }
 }
